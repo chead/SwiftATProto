@@ -11,7 +11,7 @@ public struct ATProtoHTTPRequest {
     public let urlRequest: URLRequest
 
     @available(iOS 16.0, *)
-    public init<Body: Encodable>(host: URL, nsid: String, parameters: [String : Any], body: Body, requestable: LexiconHTTPRequestable) throws {
+    public init(host: URL, nsid: String, parameters: [String : Any], body: Encodable?, requestable: LexiconHTTPRequestable) throws {
         var url = host.appending(component: "xrpc").appending(path: nsid)
 
         if let requiredParameters = requestable.parameters?.required {
@@ -90,10 +90,12 @@ public struct ATProtoHTTPRequest {
             throw ATProtoHTTPRequestError.invalidMethod
         }
 
-        let httpBody = try! JSONEncoder().encode(body)
+        if let body = body {
+            let httpBody = try! JSONEncoder().encode(body)
+            
+            newURLRequest.httpBody = httpBody
+        }
 
-        newURLRequest.httpBody = httpBody
-        
         urlRequest = newURLRequest
     }
 }
