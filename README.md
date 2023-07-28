@@ -1,3 +1,3 @@
 # SwiftATProto
 
-A description of this package.
+A Swift package for constructing ATProto requests.
