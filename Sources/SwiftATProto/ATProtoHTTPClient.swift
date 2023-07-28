@@ -7,11 +7,15 @@
 
 import Foundation
 
-enum ATProtoHTTPClientError: Error {
+public enum ATProtoHTTPClientError: Error {
     case unknown
 }
 
 public class ATProtoHTTPClient {
+    @available(iOS 13.0.0, *)
+    
+    public init(){}
+    
     @available(iOS 13.0.0, *)
     public func make<Response: Decodable>(request: ATProtoHTTPRequest) async throws -> Result<Response, Error> {
         let (data, urlResponse) = try await URLSession.shared.data(for: request.urlRequest)
