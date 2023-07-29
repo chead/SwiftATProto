@@ -40,7 +40,7 @@ public class ATProtoHTTPClient {
         case 400:
             return .failure(ATProtoHTTPClientError.badRequest)
 
-        case 401 where httpURLResponse?.allHeaderFields.keys.contains("WWW-Authenticate") == true:
+        case 401:
             return .failure(ATProtoHTTPClientError.unauthorized)
 
         case 403:
