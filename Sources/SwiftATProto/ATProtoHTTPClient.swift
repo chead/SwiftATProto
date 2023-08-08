@@ -38,34 +38,34 @@ public class ATProtoHTTPClient {
             return .success(decodedData)
 
         case 400:
-            return .failure(ATProtoHTTPClientError.badRequest)
+            return .failure(.badRequest)
 
         case 401:
-            return .failure(ATProtoHTTPClientError.unauthorized)
+            return .failure(.unauthorized)
 
         case 403:
-            return .failure(ATProtoHTTPClientError.forbidden)
+            return .failure(.forbidden)
 
         case 404:
-            return .failure(ATProtoHTTPClientError.notFound)
+            return .failure(.notFound)
 
         case 413:
-            return .failure(ATProtoHTTPClientError.largePayload)
+            return .failure(.largePayload)
 
         case 429:
-            return .failure(ATProtoHTTPClientError.tooManyRequests)
+            return .failure(.tooManyRequests)
 
         case 500:
-            return .failure(ATProtoHTTPClientError.internalServerError)
+            return .failure(.internalServerError)
 
         case 501:
-            return .failure(ATProtoHTTPClientError.notImplemented)
+            return .failure(.notImplemented)
 
         case 502, 503, 504:
-            return .failure(ATProtoHTTPClientError.unavailable)
+            return .failure(.unavailable)
 
         default:
-            return .failure(ATProtoHTTPClientError.unknown)
+            return .failure(.unknown)
         }
     }
 }
