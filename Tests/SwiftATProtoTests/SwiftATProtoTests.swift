@@ -95,7 +95,7 @@ final class SwiftATProtoTests: XCTestCase {
                 
                 let request = try ATProtoHTTPRequest(host: URL(string: "")!, nsid: createSessionLexicon.id, parameters: [:], body: createSessionBody, token: nil, requestable: procedure)
 
-                let response: Result<CreateSessionResponse, ATProtoHTTPClientError> = try await ATProtoHTTPClient().make(request: request)
+                let response: Result<CreateSessionResponse, ATProtoHTTPClientError> = await ATProtoHTTPClient().make(request: request)
 
                 switch(response) {
                 case .success(let createSessionResponse):
@@ -170,9 +170,9 @@ final class SwiftATProtoTests: XCTestCase {
         if let mainDef = getProfilesLexicon.defs["main"] {
             switch mainDef {
             case .query(let query):
-                let getProfilesRequest = try ATProtoHTTPRequest(host: URL(string: "")!, nsid: getProfilesLexicon.id, parameters: ["actors":[]], body: nil, token: "", requestable: query)
+                let getProfilesRequest = try ATProtoHTTPRequest(host: URL(string: "")!, nsid: getProfilesLexicon.id, parameters: ["actors":["foobar"]], body: nil, token: "", requestable: query)
 
-                let getProfilesResponse: Result<GetProfilesResponseBody, ATProtoHTTPClientError> = try await ATProtoHTTPClient().make(request: getProfilesRequest)
+                let getProfilesResponse: Result<GetProfilesResponseBody, ATProtoHTTPClientError> = await ATProtoHTTPClient().make(request: getProfilesRequest)
 
                 switch(getProfilesResponse) {
                 case .success(let getProfilesResponseBody):

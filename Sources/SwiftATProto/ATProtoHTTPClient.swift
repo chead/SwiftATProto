@@ -9,6 +9,7 @@ import Foundation
 
 public enum ATProtoHTTPClientError: Error {
     case badRequest
+    case badResponse
     case unauthorized
     case forbidden
     case notFound
@@ -26,46 +27,52 @@ public class ATProtoHTTPClient {
     public init(){}
     
     @available(iOS 13.0.0, *)
-    public func make<Response: Decodable>(request: ATProtoHTTPRequest) async throws -> Result<Response, ATProtoHTTPClientError> {
-        let (data, urlResponse) = try await URLSession.shared.data(for: request.urlRequest)
-
-        let httpURLResponse = urlResponse as? HTTPURLResponse
-        
-        switch(httpURLResponse?.statusCode) {
-        case 200:
-            let decodedData = try JSONDecoder().decode(Response.self, from: data)
+    public func make<Response: Decodable>(request: ATProtoHTTPRequest) async -> Result<Response, ATProtoHTTPClientError> {
+        do {
+            let (data, urlResponse) = try await URLSession.shared.data(for: request.urlRequest)
             
-            return .success(decodedData)
+            let httpURLResponse = urlResponse as? HTTPURLResponse
+            
+            switch(httpURLResponse?.statusCode) {
+            case 200:
+                do {
+                    return .success(try JSONDecoder().decode(Response.self, from: data))
+                } catch(_) {
+                    return .failure(.badResponse)
+                }
 
-        case 400:
+            case 400:
+                return .failure(.badRequest)
+                
+            case 401:
+                return .failure(.unauthorized)
+                
+            case 403:
+                return .failure(.forbidden)
+                
+            case 404:
+                return .failure(.notFound)
+                
+            case 413:
+                return .failure(.largePayload)
+                
+            case 429:
+                return .failure(.tooManyRequests)
+                
+            case 500:
+                return .failure(.internalServerError)
+                
+            case 501:
+                return .failure(.notImplemented)
+                
+            case 502, 503, 504:
+                return .failure(.unavailable)
+                
+            default:
+                return .failure(.unknown)
+            }
+        } catch(_) {
             return .failure(.badRequest)
-
-        case 401:
-            return .failure(.unauthorized)
-
-        case 403:
-            return .failure(.forbidden)
-
-        case 404:
-            return .failure(.notFound)
-
-        case 413:
-            return .failure(.largePayload)
-
-        case 429:
-            return .failure(.tooManyRequests)
-
-        case 500:
-            return .failure(.internalServerError)
-
-        case 501:
-            return .failure(.notImplemented)
-
-        case 502, 503, 504:
-            return .failure(.unavailable)
-
-        default:
-            return .failure(.unknown)
         }
     }
 }
