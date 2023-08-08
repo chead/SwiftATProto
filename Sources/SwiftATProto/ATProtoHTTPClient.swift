@@ -26,7 +26,7 @@ public class ATProtoHTTPClient {
     public init(){}
     
     @available(iOS 13.0.0, *)
-    public func make<Response: Decodable>(request: ATProtoHTTPRequest) async throws -> Result<Response, Error> {
+    public func make<Response: Decodable>(request: ATProtoHTTPRequest) async throws -> Result<Response, ATProtoHTTPClientError> {
         let (data, urlResponse) = try await URLSession.shared.data(for: request.urlRequest)
 
         let httpURLResponse = urlResponse as? HTTPURLResponse
