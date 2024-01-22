@@ -8,12 +8,12 @@
 import Foundation
 
 public struct ATProtoLabel: Decodable {
-    let src: String
-    let uri: String
-    let cid: String
-    let val: String
-    let neg: Bool
-    let cts: String
+    public let src: String
+    public let uri: String
+    public let cid: String
+    public let val: String
+    public let neg: Bool
+    public let cts: String
 
     public init(src: String, uri: String, cid: String, val: String, neg: Bool, cts: String) {
         self.src = src
