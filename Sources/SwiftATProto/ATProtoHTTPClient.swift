@@ -9,7 +9,7 @@ import Foundation
 
 public enum ATProtoHTTPClientError: Error {
     case badRequest
-    case badResponse
+    case badResponse(Error)
     case unauthorized
     case forbidden
     case notFound
@@ -37,8 +37,8 @@ public class ATProtoHTTPClient {
             case 200:
                 do {
                     return .success(try JSONDecoder().decode(Response.self, from: data))
-                } catch(_) {
-                    return .failure(.badResponse)
+                } catch(let error) {
+                    return .failure(.badResponse(error))
                 }
 
             case 400:
