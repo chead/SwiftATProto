@@ -1,13 +1,13 @@
 //
-//  ATProtoRefreshSessionResponseBody.swift
+//  ATProtoServerCreateSessionResponseBody.swift
 //  
 //
-//  Created by Christopher Head on 7/29/23.
+//  Created by Christopher Head on 7/28/23.
 //
 
 import Foundation
 
-public struct ATProtoRefreshSessionResponseBody: Decodable {
+public struct ATProtoServerCreateSessionResponseBody: Decodable {
     public let did: String
     public let handle: String
     public let accessJwt: String
