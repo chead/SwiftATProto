@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ATProtoLabel: Decodable {
+public struct ATProtoLabel: Codable {
     public let src: String
     public let uri: String
     public let cid: String?

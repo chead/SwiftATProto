@@ -17,6 +17,6 @@ final class ATProtoRefTests: XCTestCase {
         }
         """.data(using: .utf8)!
 
-        let atProtoRef = try JSONDecoder().decode(ATProtoRef.self, from: atProtoRefJSONData)
+        _ = try JSONDecoder().decode(ATProtoRef.self, from: atProtoRefJSONData)
     }
 }

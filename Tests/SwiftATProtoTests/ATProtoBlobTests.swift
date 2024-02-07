@@ -22,6 +22,6 @@ final class ATProtoBlobTests: XCTestCase {
         }
         """.data(using: .utf8)!
 
-        let atProtoBlob = try JSONDecoder().decode(ATProtoBlob.self, from: atProtoBlobJSONData)
+        _ = try JSONDecoder().decode(ATProtoBlob.self, from: atProtoBlobJSONData)
     }
 }

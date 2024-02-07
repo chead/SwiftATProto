@@ -98,10 +98,10 @@ final class SwiftATProtoTests: XCTestCase {
                 let response: Result<CreateSessionResponse, ATProtoHTTPClientError> = await ATProtoHTTPClient().make(request: request)
 
                 switch(response) {
-                case .success(let createSessionResponse):
+                case .success(_):
                     break
                 
-                case .failure(let error):
+                case .failure(_):
                     break
                 }
             default:
@@ -175,10 +175,10 @@ final class SwiftATProtoTests: XCTestCase {
                 let getProfilesResponse: Result<GetProfilesResponseBody, ATProtoHTTPClientError> = await ATProtoHTTPClient().make(request: getProfilesRequest)
 
                 switch(getProfilesResponse) {
-                case .success(let getProfilesResponseBody):
+                case .success(_):
                     break
                 
-                case .failure(let error):
+                case .failure(_):
                     break
                 }
 

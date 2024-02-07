@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ATProtoBlob: Decodable {
+public struct ATProtoBlob: Codable {
     public let ref: ATProtoRef
     public let mimeType: String
     public let size: Int
