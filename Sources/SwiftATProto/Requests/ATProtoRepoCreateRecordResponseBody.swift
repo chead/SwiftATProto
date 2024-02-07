@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ATProtoRepoCreateRecordResponseBody: Decodable {
-    let uri: String
-    let cid: String
+public struct ATProtoRepoCreateRecordResponseBody: Decodable {
+    public let uri: String
+    public let cid: String
 }
