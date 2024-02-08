@@ -36,7 +36,11 @@ public class ATProtoHTTPClient {
             switch(httpURLResponse?.statusCode) {
             case 200:
                 do {
-                    return .success(try JSONDecoder().decode(Response.self, from: data))
+                    if(data.count == 0) {
+                        return .success(nil)
+                    } else {
+                        return .success(try JSONDecoder().decode(Response.self, from: data))
+                    }
                 } catch(let error) {
                     return .failure(.badResponse(error))
                 }
