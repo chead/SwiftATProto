@@ -27,7 +27,7 @@ public class ATProtoHTTPClient {
     public init(){}
     
     @available(iOS 13.0.0, *)
-    public func make<Response: Decodable>(request: ATProtoHTTPRequest) async -> Result<Response?, ATProtoHTTPClientError> {
+    public func make<Response: Decodable>(request: ATProtoHTTPRequest) async -> Result<Response, ATProtoHTTPClientError> {
         do {
             let (data, urlResponse) = try await URLSession.shared.data(for: request.urlRequest)
             
@@ -36,11 +36,7 @@ public class ATProtoHTTPClient {
             switch(httpURLResponse?.statusCode) {
             case 200:
                 do {
-                    if(data.count == 0) {
-                        return .success(nil)
-                    } else {
-                        return .success(try JSONDecoder().decode(Response.self, from: data))
-                    }
+                    return .success(try JSONDecoder().decode(Response.self, from: data))
                 } catch(let error) {
                     return .failure(.badResponse(error))
                 }
