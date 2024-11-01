@@ -24,3 +24,11 @@ public struct ATProtoLabel: Codable {
         self.cts = cts
     }
 }
+
+public struct ATProtoSelfLabel: Codable {
+    public let val: String
+}
+
+public struct ATProtoSelfLabels: Codable {
+    public let values: [ATProtoSelfLabel]
+}
