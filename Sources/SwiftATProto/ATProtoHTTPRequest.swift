@@ -25,7 +25,7 @@ public struct ATProtoHTTPRequest {
         if let properties = requestable.parameters?.properties {
             for property in properties {
                 switch(property.value) {
-                case .boolean(_) where parameters[property.key] is Bool:
+                case .boolean(_):
                     if let booleanParameter = parameters[property.key] as? Bool {
                         url.append(queryItems: [URLQueryItem(name: property.key, value: String(booleanParameter))])
                     } else {
