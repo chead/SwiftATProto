@@ -3,7 +3,6 @@ import SwiftLexicon
 
 enum ATProtoHTTPRequestError: String, Error {
     case requiredParameters
-    case invalidParameter
     case invalidMethod
 }
 
@@ -28,22 +27,16 @@ public struct ATProtoHTTPRequest {
                 case .boolean(_):
                     if let booleanParameter = parameters[property.key] as? Bool {
                         url.append(queryItems: [URLQueryItem(name: property.key, value: String(booleanParameter))])
-                    } else {
-                        throw ATProtoHTTPRequestError.invalidParameter
                     }
 
                 case .integer(_):
                     if let integerParameter = parameters[property.key] as? Int {
                         url.append(queryItems: [URLQueryItem(name: property.key, value: String(integerParameter))])
-                    } else {
-                        throw ATProtoHTTPRequestError.invalidParameter
                     }
 
                 case .string(_), .unknown(_):
                     if let stringParameter = parameters[property.key] as? String {
                         url.append(queryItems: [URLQueryItem(name: property.key, value: stringParameter)])
-                    } else {
-                        throw ATProtoHTTPRequestError.invalidParameter
                     }
 
                 case .array(_):
@@ -60,15 +53,13 @@ public struct ATProtoHTTPRequest {
                                 url.append(queryItems: [URLQueryItem(name: property.key, value: string)])
 
                             default:
-                                throw ATProtoHTTPRequestError.invalidParameter
+                                break
                             }
                         }
-                    } else {
-                        throw ATProtoHTTPRequestError.invalidParameter
                     }
 
                 default:
-                    throw ATProtoHTTPRequestError.invalidParameter
+                    break
                 }
             }
         }
