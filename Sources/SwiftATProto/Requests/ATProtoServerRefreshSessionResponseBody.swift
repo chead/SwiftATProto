@@ -5,8 +5,6 @@
 //  Created by Christopher Head on 7/29/23.
 //
 
-import Foundation
-
 public struct ATProtoServerRefreshSessionResponseBody: Decodable {
     public let did: String
     public let handle: String

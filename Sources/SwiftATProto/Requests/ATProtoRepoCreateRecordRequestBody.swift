@@ -5,8 +5,6 @@
 //  Created by Christopher Head on 2/7/24.
 //
 
-import Foundation
-
 public struct ATProtoRepoCreateRecordRequestBody<Record: Encodable>: Encodable {
     public let repo: String
     public let collection: String
