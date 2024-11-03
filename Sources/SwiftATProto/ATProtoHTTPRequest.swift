@@ -10,7 +10,7 @@ public struct ATProtoHTTPRequest {
     public let urlRequest: URLRequest
 
     @available(iOS 16.0, *)
-    public init(host: URL, nsid: String, parameters: [String : Any], body: Encodable?, token: String?, requestable: LexiconHTTPRequestable) throws {
+    public init(host: URL, nsid: String, parameters: [String : Any], body: Encodable?, token: String?, requestable: LexiconHTTPRequestable, encoding: String? = nil) throws {
         var url = host.appending(component: "xrpc").appending(path: nsid)
 
         if let requiredParameters = requestable.parameters?.required {
@@ -66,7 +66,10 @@ public struct ATProtoHTTPRequest {
         
         var newURLRequest = URLRequest(url: url)
 
-        if let encoding = requestable.input?.encoding {
+        if let encoding = encoding {
+            newURLRequest.setValue(encoding, forHTTPHeaderField: "Content-Type")
+        }
+        else if let encoding = requestable.input?.encoding {
             newURLRequest.setValue(encoding, forHTTPHeaderField: "Content-Type")
         }
 
