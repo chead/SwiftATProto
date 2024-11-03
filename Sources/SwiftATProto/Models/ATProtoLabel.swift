@@ -30,5 +30,23 @@ public struct ATProtoSelfLabel: Codable {
 }
 
 public struct ATProtoSelfLabels: Codable {
+    private enum CodingKeys: String, CodingKey {
+        case type = "$type"
+        case values
+    }
+
     public let values: [ATProtoSelfLabel]
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.values = try container.decode([ATProtoSelfLabel].self, forKey: .values)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode("com.atproto.label.defs#selfLabels", forKey: .type)
+        try container.encode(values, forKey: .values)
+    }
 }
