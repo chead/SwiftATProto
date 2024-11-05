@@ -27,7 +27,7 @@ public class ATProtoHTTPClient {
     public init(){}
     
     @available(iOS 13.0.0, *)
-    public func make<Response: Decodable, HTTPError: Error>(request: ATProtoHTTPRequest) async -> Result<Response, ATProtoHTTPClientError<HTTPError>> {
+    public func make<Response: Decodable, RequestError: Error>(request: ATProtoHTTPRequest) async -> Result<Response, ATProtoHTTPClientError<RequestError>> {
         do {
             let (data, urlResponse) = try await URLSession.shared.data(for: request.urlRequest)
             
@@ -42,7 +42,7 @@ public class ATProtoHTTPClient {
                 }
 
             case 400:
-                return .failure(.badRequest(try? JSONDecoder().decode(HTTPError.self, from: data)))
+                return .failure(.badRequest(try? JSONDecoder().decode(RequestError.self, from: data)))
 
             case 401:
                 return .failure(.unauthorized)
