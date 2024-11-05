@@ -74,7 +74,7 @@ public struct ATProtoHTTPRequest {
         }
 
         if let token = token {
-            newURLRequest.setValue( "Bearer \(token)", forHTTPHeaderField: "Authorization")
+            newURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
 
         switch requestable {

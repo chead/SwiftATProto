@@ -7,8 +7,8 @@
 
 import Foundation
 
-public enum ATProtoHTTPClientError: Error {
-    case badRequest
+public enum ATProtoHTTPClientError<HTTPError: Decodable>: Error {
+    case badRequest(HTTPError?)
     case badResponse(Error)
     case unauthorized
     case forbidden
@@ -27,7 +27,7 @@ public class ATProtoHTTPClient {
     public init(){}
     
     @available(iOS 13.0.0, *)
-    public func make<Response: Decodable>(request: ATProtoHTTPRequest) async -> Result<Response?, ATProtoHTTPClientError> {
+    public func make<Response: Decodable, HTTPError: Error>(request: ATProtoHTTPRequest) async -> Result<Response, ATProtoHTTPClientError<HTTPError>> {
         do {
             let (data, urlResponse) = try await URLSession.shared.data(for: request.urlRequest)
             
@@ -36,18 +36,14 @@ public class ATProtoHTTPClient {
             switch(httpURLResponse?.statusCode) {
             case 200:
                 do {
-                    if(data.count == 0) {
-                        return .success(nil)
-                    } else {
-                        return .success(try JSONDecoder().decode(Response.self, from: data))
-                    }
+                    return .success(try JSONDecoder().decode(Response.self, from: data))
                 } catch(let error) {
                     return .failure(.badResponse(error))
                 }
 
             case 400:
-                return .failure(.badRequest)
-                
+                return .failure(.badRequest(try? JSONDecoder().decode(HTTPError.self, from: data)))
+
             case 401:
                 return .failure(.unauthorized)
                 
@@ -76,7 +72,7 @@ public class ATProtoHTTPClient {
                 return .failure(.unknown)
             }
         } catch(_) {
-            return .failure(.badRequest)
+            return .failure(.unknown)
         }
     }
 }
