@@ -25,7 +25,7 @@ public enum ATProtoHTTPClientError<HTTPError: Decodable>: Error {
 
 public class ATProtoHTTPClient {
     @available(iOS 13.0.0, *)
-    public static func make<Response: Decodable, RequestError: Error>(request: ATProtoHTTPRequest) async -> Result<Response, ATProtoHTTPClientError<RequestError>> {
+    public static func make<Response: Decodable, RequestError: Decodable>(request: ATProtoHTTPRequest) async -> Result<Response, ATProtoHTTPClientError<RequestError>> {
         do {
             let (data, urlResponse) = try await URLSession.shared.data(for: request.urlRequest)
             
