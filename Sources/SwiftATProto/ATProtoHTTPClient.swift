@@ -7,8 +7,8 @@
 
 import Foundation
 
-public enum ATProtoHTTPClientError<HTTPError: Decodable>: Error {
-    case badRequest(error: HTTPError?)
+public enum ATProtoHTTPClientError<RequestError: Decodable>: Error {
+    case badRequest(error: RequestError?)
     case badResponse(error: Error)
     case noResponse
     case unauthorized
