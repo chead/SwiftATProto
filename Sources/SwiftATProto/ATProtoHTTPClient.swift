@@ -44,7 +44,7 @@ public class ATProtoHTTPClient {
                 }
 
             case 400:
-                return .failure(.badRequest(error: try? JSONDecoder().decode(RequestError.self, from: data)))
+                return .failure(.badRequest(error: try JSONDecoder().decode(RequestError.self, from: data)))
 
             case 401:
                 return .failure(.unauthorized)
