@@ -8,8 +8,9 @@
 import Foundation
 
 public enum ATProtoHTTPClientError<HTTPError: Decodable>: Error {
-    case badRequest(HTTPError?)
-    case badResponse(Error)
+    case badRequest(error: HTTPError?)
+    case badResponse(error: Error)
+    case noResponse
     case unauthorized
     case forbidden
     case notFound
@@ -18,31 +19,30 @@ public enum ATProtoHTTPClientError<HTTPError: Decodable>: Error {
     case internalServerError
     case notImplemented
     case unavailable
-    case unknown
+    case session(error: Error)
+    case unknown(status: Int)
 }
 
 public class ATProtoHTTPClient {
     @available(iOS 13.0.0, *)
-    
-    public init(){}
-    
-    @available(iOS 13.0.0, *)
-    public func make<Response: Decodable, RequestError: Error>(request: ATProtoHTTPRequest) async -> Result<Response, ATProtoHTTPClientError<RequestError>> {
+    public static func make<Response: Decodable, RequestError: Error>(request: ATProtoHTTPRequest) async -> Result<Response, ATProtoHTTPClientError<RequestError>> {
         do {
             let (data, urlResponse) = try await URLSession.shared.data(for: request.urlRequest)
             
-            let httpURLResponse = urlResponse as? HTTPURLResponse
-            
-            switch(httpURLResponse?.statusCode) {
+            guard let httpURLResponse = urlResponse as? HTTPURLResponse else {
+                return .failure(.noResponse)
+            }
+
+            switch(httpURLResponse.statusCode) {
             case 200:
                 do {
                     return .success(try JSONDecoder().decode(Response.self, from: data))
                 } catch(let error) {
-                    return .failure(.badResponse(error))
+                    return .failure(.badResponse(error: error))
                 }
 
             case 400:
-                return .failure(.badRequest(try? JSONDecoder().decode(RequestError.self, from: data)))
+                return .failure(.badRequest(error: try? JSONDecoder().decode(RequestError.self, from: data)))
 
             case 401:
                 return .failure(.unauthorized)
@@ -69,10 +69,10 @@ public class ATProtoHTTPClient {
                 return .failure(.unavailable)
                 
             default:
-                return .failure(.unknown)
+                return .failure(.unknown(status: httpURLResponse.statusCode))
             }
-        } catch(_) {
-            return .failure(.unknown)
+        } catch(let error) {
+            return .failure(.session(error: error))
         }
     }
 }
