@@ -7,10 +7,31 @@
 
 import Foundation
 
+public enum ATProtoHTTPClientRequestError: String, Decodable {
+    case invalidRequest = "InvalidRequest"
+    case expiredToken = "ExpiredToken"
+    case invalidToken = "InvalidToken"
+}
 
+public enum ATProtoHTTPClientBadRequestType<ATProtoHTTPClientMethodError: Decodable>: Decodable {
+    case request(ATProtoHTTPClientRequestError)
+    case method(ATProtoHTTPClientMethodError)
 
-public enum ATProtoHTTPClientError<RequestError: Decodable>: Error {
-    case badRequest(error: RequestError)
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+
+        if let requestError = try? container.decode(ATProtoHTTPClientRequestError.self) {
+            self = .request(requestError)
+        } else if let methodError = try? container.decode(ATProtoHTTPClientMethodError.self) {
+            self = .method(methodError)
+        } else {
+            throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Could not decode error with type \(ATProtoHTTPClientMethodError.self)."))
+        }
+    }
+}
+
+public enum ATProtoHTTPClientError<ATProtoHTTPClientMethodError: Decodable>: Error {
+    case badRequest(error: ATProtoHTTPClientBadRequestType<ATProtoHTTPClientMethodError>, message: String)
     case badResponse(error: Error)
     case noResponse
     case unauthorized
@@ -25,9 +46,14 @@ public enum ATProtoHTTPClientError<RequestError: Decodable>: Error {
     case unknown(status: Int)
 }
 
+public struct ATProtoHTTPClientErrorResponse: Decodable {
+    let error: Data
+    let message: String
+}
+
 public class ATProtoHTTPClient {
-    @available(iOS 13.0.0, *)
-    public static func make<Response: Decodable, RequestError: Decodable>(request: ATProtoHTTPRequest) async -> Result<Response, ATProtoHTTPClientError<RequestError>> {
+    @available(iOS 15.0, *)
+    public static func make<ATProtoHTTPClientResponse: Decodable, ATProtoHTTPClientMethodError: Decodable>(request: ATProtoHTTPRequest) async -> Result<ATProtoHTTPClientResponse, ATProtoHTTPClientError<ATProtoHTTPClientMethodError>> {
         do {
             let (data, urlResponse) = try await URLSession.shared.data(for: request.urlRequest)
             
@@ -38,13 +64,16 @@ public class ATProtoHTTPClient {
             switch(httpURLResponse.statusCode) {
             case 200:
                 do {
-                    return .success(try JSONDecoder().decode(Response.self, from: data))
+                    return .success(try JSONDecoder().decode(ATProtoHTTPClientResponse.self, from: data))
                 } catch(let error) {
                     return .failure(.badResponse(error: error))
                 }
 
             case 400:
-                return .failure(.badRequest(error: try JSONDecoder().decode(RequestError.self, from: data)))
+                let serviceClientError = try JSONDecoder().decode(ATProtoHTTPClientErrorResponse.self, from: data)
+                let serviceClientErrorType = try JSONDecoder().decode(ATProtoHTTPClientBadRequestType<ATProtoHTTPClientMethodError>.self, from: serviceClientError.error)
+
+                return .failure(.badRequest(error: serviceClientErrorType, message: serviceClientError.message))
 
             case 401:
                 return .failure(.unauthorized)
