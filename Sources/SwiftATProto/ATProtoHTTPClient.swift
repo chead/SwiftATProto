@@ -46,8 +46,8 @@ public enum ATProtoHTTPClientError<ATProtoHTTPClientMethodError: Decodable>: Err
     case unknown(status: Int)
 }
 
-public struct ATProtoHTTPClientErrorResponse: Decodable {
-    let error: Data
+public struct ATProtoHTTPClientBadRequestErrorResponse<ATProtoHTTPClientMethodError: Decodable>: Decodable {
+    let error: ATProtoHTTPClientBadRequestType<ATProtoHTTPClientMethodError>
     let message: String
 }
 
@@ -70,10 +70,13 @@ public class ATProtoHTTPClient {
                 }
 
             case 400:
-                let serviceClientError = try JSONDecoder().decode(ATProtoHTTPClientErrorResponse.self, from: data)
-                let serviceClientErrorType = try JSONDecoder().decode(ATProtoHTTPClientBadRequestType<ATProtoHTTPClientMethodError>.self, from: serviceClientError.error)
+                do {
+                    let badRequestErrorResponse = try JSONDecoder().decode(ATProtoHTTPClientBadRequestErrorResponse<ATProtoHTTPClientMethodError>.self, from: data)
 
-                return .failure(.badRequest(error: serviceClientErrorType, message: serviceClientError.message))
+                    return .failure(.badRequest(error: badRequestErrorResponse.error, message: badRequestErrorResponse.message))
+                } catch(let error) {
+                    return .failure(.badResponse(error: error))
+                }
 
             case 401:
                 return .failure(.unauthorized)
