@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ATProtoBlob: Codable {
+public struct ATProtoBlob: Hashable, Codable {
     private enum CodingKeys: String, CodingKey {
         case type = "$type"
         case ref

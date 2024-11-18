@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ATProtoRepoStrongRef: Codable {
+public struct ATProtoRepoStrongRef: Hashable, Codable {
     public let uri: String
     public let cid: String
 

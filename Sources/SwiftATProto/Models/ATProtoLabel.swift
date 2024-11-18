@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ATProtoLabel: Codable {
+public struct ATProtoLabel: Hashable, Codable {
     public let src: String
     public let uri: String
     public let cid: String?
@@ -25,11 +25,11 @@ public struct ATProtoLabel: Codable {
     }
 }
 
-public struct ATProtoSelfLabel: Codable {
+public struct ATProtoSelfLabel: Hashable, Codable {
     public let val: String
 }
 
-public struct ATProtoSelfLabels: Codable {
+public struct ATProtoSelfLabels: Hashable, Codable {
     private enum CodingKeys: String, CodingKey {
         case type = "$type"
         case values

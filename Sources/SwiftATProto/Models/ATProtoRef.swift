@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ATProtoRef: Codable {
+public struct ATProtoRef: Hashable, Codable {
     private enum CodingKeys: String, CodingKey {
         case link = "$link"
     }

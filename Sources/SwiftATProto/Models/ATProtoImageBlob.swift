@@ -9,7 +9,7 @@
 
 import Foundation
 
-public struct ATProtoImageBlob: Codable {
+public struct ATProtoImageBlob: Hashable, Codable {
     public let cid: String
     public let mimeType: String
 }
